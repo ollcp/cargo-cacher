@@ -315,9 +315,9 @@ pub fn log(req: &mut Request) -> IronResult<Response> {
 fn fetch_download(
     req: &mut Request,
     config: &Config,
-    stats: &Mutex<SyncSender<CargoRequest>>,
+    _: &Mutex<SyncSender<CargoRequest>>,
 ) -> IronResult<Response> {
-    let stats = stats.lock().unwrap();
+    //let stats = stats.lock().unwrap();
     let ref crate_name = req
         .extensions
         .get::<Router>()
@@ -338,12 +338,12 @@ fn fetch_download(
     ));
     if path.exists() {
         debug!("path {:?} exists!", path);
-        let _ = stats.send(CargoRequest {
-            name: crate_name.to_string(),
-            version: crate_version.to_string(),
-            hit: true,
-            size: size(&path) as i64,
-        });
+        // let _ = stats.send(CargoRequest {
+        //     name: crate_name.to_string(),
+        //     version: crate_version.to_string(),
+        //     hit: true,
+        //     size: size(&path) as i64,
+        // });
         Ok(Response::with((status::Ok, path)))
     } else {
         debug!("path {:?} doesn't exist!", path);
@@ -356,12 +356,12 @@ fn fetch_download(
             &crate_version,
         ) {
             Ok(_) => {
-                let _ = stats.send(CargoRequest {
-                    name: crate_name.to_string(),
-                    version: crate_version.to_string(),
-                    hit: false,
-                    size: size(&path) as i64,
-                });
+                // let _ = stats.send(CargoRequest {
+                //     name: crate_name.to_string(),
+                //     version: crate_version.to_string(),
+                //     hit: false,
+                //     size: size(&path) as i64,
+                // });
                 Ok(Response::with((status::Ok, path)))
             }
             Err(e) => {
